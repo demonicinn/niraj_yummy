@@ -70,5 +70,10 @@
         return $data->title;
     }
 
+    function uniqueCode(){
+        $code = substr(md5(uniqid(mt_rand(), true)) , 0, 6);
+        return strtoupper($code);
+    }
+
 
     

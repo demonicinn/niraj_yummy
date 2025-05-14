@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PreferencesController;
 use App\Http\Controllers\Api\RestaurantsController;
 use App\Http\Controllers\Api\RestaurantMenusController;
 use App\Http\Controllers\Api\RestaurantReviewsController;
+use App\Http\Controllers\Api\GroupsController;
 
 
 
@@ -75,6 +76,18 @@ Route::middleware('auth:sanctum')->group( function () {
             Route::post('/store', 'store');
         });
     });
-    
 
+    //restaurants reviews
+    Route::controller(GroupsController::class)->group(function () {
+        Route::group(['prefix' => 'groups'], function(){
+            //...
+            Route::get('/', 'index');
+            Route::post('/add', 'addUser');
+            Route::post('/create', 'store');
+            Route::get('/{code}/magic', 'magic');
+            Route::get('/{group}', 'show');
+        });
+    });
+    
+    
 });
