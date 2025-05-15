@@ -17,7 +17,15 @@ class RestaurantsController extends BaseController
         $user = auth()->user();
         $userRestaurant = Restaurants::whereHas('userRestaurants', function($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->get();
+        })
+        ->where(function ($query) use ($request){
+            if($request->group_code){
+                $query->where('group_code', $request->group_code);
+            } else {
+                $query->whereNull('group_code');
+            }
+        })
+        ->get();
         
 
         return $this->sendResponse($userRestaurant, 'User Restaurants retrieved successfully.');
@@ -40,7 +48,15 @@ class RestaurantsController extends BaseController
         //add multiple Restaurants
         foreach($request->data as $data){
             //...
-            $checkRestaurant = Restaurants::where('name', 'like', '%'.$data['name'].'%')->first();
+            $checkRestaurant = Restaurants::where('name', 'like', '%'.$data['name'].'%')
+            ->where(function ($query) use ($request){
+                if($request->group_code){
+                    $query->where('group_code', $request->group_code);
+                } else {
+                    $query->whereNull('group_code');
+                }
+            })
+            ->first();
 
             //...
             $store = new Restaurants;
@@ -49,6 +65,10 @@ class RestaurantsController extends BaseController
                 $store->id = $checkRestaurant->id;
                 $store->exists = true;
             }
+            if(isset($request->group_code)){
+                $store->group_code = $request->group_code;
+            }
+
             $store->name = $data['name'];
             $store->description = $data['description'];
             $store->type = $data['type'];
@@ -98,6 +118,6 @@ class RestaurantsController extends BaseController
         
 
 
-        return $this->sendResponse('', 'Restaurants updated successfully.');
+        return $this->sendResponse('', 'Restaurants created successfully.');
     }
 }

@@ -18,6 +18,7 @@ class GroupsController extends BaseController
         // $data['active'] = Groups::where('user_id', $user->id)->where('status', '1')->get();
         // $data['past'] = Groups::where('user_id', $user->id)->where('status', '0')->get();
 
+        //$data['code'] = uniqueCode();
 
         $data['active'] = Groups::whereHas('groupUsers', function($query) use ($user){
                 $query->where('user_id', $user->id);
@@ -49,6 +50,11 @@ class GroupsController extends BaseController
 
         //...
         $unique_code = uniqueCode();
+        $checkCode = Groups::where('unique_code', $unique_code)->count();
+        if($checkCode > 0){
+            sleep(2);
+            $unique_code = uniqueCode();
+        }
 
         $user = auth()->user();
         

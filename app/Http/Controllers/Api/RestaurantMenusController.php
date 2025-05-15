@@ -23,14 +23,20 @@ class RestaurantMenusController extends BaseController
         }
 
         //...
-        $checkRestaurant = Restaurants::where('name', 'like', '%'.$request['Name'].'%')->first();
+        $checkRestaurant = Restaurants::where('name', 'like', '%'.$request['Name'].'%')
+        ->where(function ($query) use ($request){
+            if($request->group_code){
+                $query->where('group_code', $request->group_code);
+            } else {
+                $query->whereNull('group_code');
+            }
+        })
+        ->first();
         if($checkRestaurant){
             $restaurantMenu = RestaurantMenus::where('restaurant_id', $checkRestaurant->id)->first();
 
-
             return $this->sendResponse($restaurantMenu, 'Restaurant Menus retrieved successfully.');
         }
-
 
         return $this->sendError('Something went wrong.'); 
     }
@@ -49,7 +55,15 @@ class RestaurantMenusController extends BaseController
         }
 
         //...
-        $checkRestaurant = Restaurants::where('name', 'like', '%'.$request['Name'].'%')->first();
+        $checkRestaurant = Restaurants::where('name', 'like', '%'.$request['Name'].'%')
+        ->where(function ($query) use ($request){
+            if($request->group_code){
+                $query->where('group_code', $request->group_code);
+            } else {
+                $query->whereNull('group_code');
+            }
+        })
+        ->first();
         if($checkRestaurant){
             $checkRestaurantMenu = RestaurantMenus::where('restaurant_id', $checkRestaurant->id)->first();
 
